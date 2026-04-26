@@ -6,10 +6,10 @@
     <title>MEDAKA LOG</title>
     <style>
         :root {
-            --bg-depth: #030712;       /* 深い水底 */
-            --glass-panel: rgba(15, 23, 42, 0.7); /* 半透明の層 */
-            --accent-selection: #fbbf24; /* 選抜個体を照らす光 */
-            --accent-main: #38bdf8;      /* 混泳水槽の静かな青 */
+            --bg-depth: #030712;
+            --glass-panel: rgba(15, 23, 42, 0.7);
+            --accent-selection: #fbbf24;
+            --accent-main: #38bdf8;
             --text-main: #f1f5f9;
             --text-dim: #94a3b8;
         }
@@ -36,19 +36,25 @@
             font-size: 1.8rem;
             font-weight: 800;
             margin: 0;
-            letter-spacing: -0.02em;
+            line-height: 1.1;
             background: linear-gradient(to bottom, #fff, #94a3b8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .last-sync {
+        .weather-info {
+            text-align: right;
             font-size: 0.7rem;
             color: var(--text-dim);
             letter-spacing: 0.05em;
+            line-height: 1.6;
         }
 
-        /* メイン水槽サマリー */
+        #weather-display {
+            color: var(--accent-main);
+            font-weight: bold;
+        }
+
         .main-summary {
             background: var(--glass-panel);
             backdrop-filter: blur(12px);
@@ -76,14 +82,12 @@
 
         .unit { font-size: 1rem; opacity: 0.5; margin-left: 4px; }
 
-        /* グリッドレイアウト */
         .medaka-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
         }
 
-        /* 個別タイル */
         .medaka-tile {
             background: var(--glass-panel);
             backdrop-filter: blur(8px);
@@ -95,10 +99,8 @@
             flex-direction: column;
             justify-content: space-between;
             min-height: 140px;
-            transition: transform 0.2s ease;
         }
 
-        /* 選抜モードの強調 */
         .medaka-tile.selection {
             border-top: 4px solid var(--accent-selection);
             background: rgba(251, 191, 36, 0.03);
@@ -116,7 +118,6 @@
         .breed-name {
             font-size: 1.1rem;
             font-weight: 700;
-            line-height: 1.2;
             margin-bottom: 8px;
         }
 
@@ -124,10 +125,6 @@
             font-size: 0.7rem;
             color: var(--text-dim);
             line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
         .tile-footer {
@@ -137,12 +134,8 @@
             align-items: baseline;
         }
 
-        .tile-count {
-            font-size: 1.4rem;
-            font-weight: 800;
-        }
+        .tile-count { font-size: 1.4rem; font-weight: 800; }
 
-        /* フッターボタン */
         .action-bar {
             position: fixed;
             bottom: 30px;
@@ -150,7 +143,6 @@
             right: 0;
             display: flex;
             justify-content: center;
-            z-index: 100;
         }
 
         .update-btn {
@@ -162,9 +154,6 @@
             font-size: 0.9rem;
             font-weight: 700;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
     </style>
 </head>
@@ -172,14 +161,17 @@
 
     <header>
         <h1>MEDAKA<br>LOG</h1>
-        <div class="last-sync">LAST SYNC 09:30</div>
+        <div class="weather-info">
+            <div id="weather-display">Loading Weather...</div>
+            <div id="sync-time">Syncing...</div>
+        </div>
     </header>
 
     <section class="main-summary">
         <span class="summary-label">Mixed Main Tank</span>
         <div class="summary-count">120<span class="unit">pcs</span></div>
         <div style="font-size: 0.75rem; margin-top: 12px; color: var(--accent-main);">
-            Outdoor / Stable Environment
+            Gravel Base / Outdoor Tank
         </div>
     </section>
 
@@ -188,7 +180,7 @@
             <div>
                 <span class="status-tag" style="color: var(--accent-selection);">Selection</span>
                 <span class="breed-name">レックウザ</span>
-                <p class="observation">体外光のノリ良好。繁殖用水槽へ移動済み。</p>
+                <p class="observation">加温・ペアリング開始。</p>
             </div>
             <div class="tile-footer">
                 <div class="tile-count">8<span class="unit">pcs</span></div>
@@ -199,30 +191,46 @@
             <div>
                 <span class="status-tag">Mixed</span>
                 <span class="breed-name">黒豆</span>
-                <p class="observation">屋外越冬組。非常にタフで安定している。</p>
+                <p class="observation">メイン水槽へ合流済み。</p>
             </div>
             <div class="tile-footer">
                 <div class="tile-count">25<span class="unit">pcs</span></div>
             </div>
         </div>
-
-        <div class="medaka-tile">
-            <div>
-                <span class="status-tag">Mixed</span>
-                <span class="breed-name">ミックス</span>
-                <p class="observation">メイン水槽でのびのび泳いでいる群。</p>
-            </div>
-            <div class="tile-footer">
-                <div class="tile-count">87<span class="unit">pcs</span></div>
-            </div>
-        </div>
     </div>
 
     <div class="action-bar">
-        <button class="update-btn" onclick="location.reload()">
-            <span>↻</span> UPDATE LOG
-        </button>
+        <button class="update-btn" onclick="updateWeather()">↻ UPDATE LOG</button>
     </div>
 
+    <script>
+        // --- 設定エリア ---
+        const API_KEY = '4f2152916a220ca8c65df5671fe943fb';
+        const CITY = 'Kiyose'; 
+
+        async function updateWeather() {
+            const weatherDisp = document.getElementById('weather-display');
+            const syncDisp = document.getElementById('sync-time');
+            
+            try {
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric&lang=ja`);
+                if (!response.ok) throw new Error('Network error');
+                
+                const data = await response.json();
+                const temp = Math.round(data.main.temp);
+                const condition = data.weather[0].main;
+                const humid = data.main.humidity;
+
+                weatherDisp.innerText = `${condition} ${temp}°C / Humid: ${humid}%`;
+                syncDisp.innerText = `SYNC: ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            } catch (error) {
+                weatherDisp.innerText = "Weather: N/A";
+                syncDisp.innerText = "Check API Key";
+            }
+        }
+
+        // 初回読み込み
+        updateWeather();
+    </script>
 </body>
 </html>
