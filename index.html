@@ -2,148 +2,227 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MEDAKA LOG</title>
     <style>
         :root {
-            --bg-aqua-dark: #050a14;
-            --card-bg: #0f172a;
-            --text-main: #e2e8f0;
-            --accent-water: #38bdf8;      /* 混泳：水色 */
-            --accent-breeding: #fbbf24;   /* 選抜：ゴールド */
-            --status-healthy: #2dd4bf;
+            --bg-depth: #030712;       /* 深い水底 */
+            --glass-panel: rgba(15, 23, 42, 0.7); /* 半透明の層 */
+            --accent-selection: #fbbf24; /* 選抜個体を照らす光 */
+            --accent-main: #38bdf8;      /* 混泳水槽の静かな青 */
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
         }
 
         body {
-            background-color: var(--bg-aqua-dark);
+            background: radial-gradient(circle at top, #0f172a 0%, var(--bg-depth) 100%);
+            background-attachment: fixed;
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
-            padding: 16px;
-            line-height: 1.5;
+            padding: 20px 16px 100px 16px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .header-section {
+        header {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 20px;
+            align-items: flex-end;
+            margin-bottom: 32px;
+            padding: 0 4px;
         }
 
-        .sync-time {
-            font-size: 0.8rem;
-            opacity: 0.6;
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .last-sync {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 0.05em;
         }
 
         /* メイン水槽サマリー */
-        .summary-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        .main-summary {
+            background: var(--glass-panel);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 32px;
         }
 
-        .summary-title {
-            font-size: 0.9rem;
-            font-weight: bold;
+        .summary-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-main);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .summary-count {
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .unit { font-size: 1rem; opacity: 0.5; margin-left: 4px; }
+
+        /* グリッドレイアウト */
+        .medaka-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        /* 個別タイル */
+        .medaka-tile {
+            background: var(--glass-panel);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+            transition: transform 0.2s ease;
+        }
+
+        /* 選抜モードの強調 */
+        .medaka-tile.selection {
+            border-top: 4px solid var(--accent-selection);
+            background: rgba(251, 191, 36, 0.03);
+        }
+
+        .status-tag {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             margin-bottom: 8px;
             display: block;
         }
 
-        .total-count {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-
-        .unit { font-size: 1rem; opacity: 0.7; }
-
-        /* 個別カード */
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-left: 5px solid var(--accent-water);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* 選抜モードのカード */
-        .card.selection {
-            border-left-color: var(--accent-breeding);
-        }
-
         .breed-name {
             font-size: 1.1rem;
-            font-weight: bold;
-            display: block;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 8px;
         }
 
-        .tag {
+        .observation {
             font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.1);
+            color: var(--text-dim);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .count-area { text-align: right; }
-        
-        .update-btn {
+        .tile-footer {
+            margin-top: 16px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: baseline;
+        }
+
+        .tile-count {
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        /* フッターボタン */
+        .action-bar {
             position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #222;
-            color: white;
-            padding: 12px 30px;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .update-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            border: none;
+            padding: 14px 28px;
             border-radius: 30px;
-            border: 1px solid #444;
             font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header-section">
-        <h1 style="font-size: 1.5rem; margin: 0;">MEDAKA LOG</h1>
-        <span class="sync-time">Last Sync: 9:25</span>
+    <header>
+        <h1>MEDAKA<br>LOG</h1>
+        <div class="last-sync">LAST SYNC 09:30</div>
+    </header>
+
+    <section class="main-summary">
+        <span class="summary-label">Mixed Main Tank</span>
+        <div class="summary-count">120<span class="unit">pcs</span></div>
+        <div style="font-size: 0.75rem; margin-top: 12px; color: var(--accent-main);">
+            Outdoor / Stable Environment
+        </div>
+    </section>
+
+    <div class="medaka-grid">
+        <div class="medaka-tile selection">
+            <div>
+                <span class="status-tag" style="color: var(--accent-selection);">Selection</span>
+                <span class="breed-name">レックウザ</span>
+                <p class="observation">体外光のノリ良好。繁殖用水槽へ移動済み。</p>
+            </div>
+            <div class="tile-footer">
+                <div class="tile-count">8<span class="unit">pcs</span></div>
+            </div>
+        </div>
+
+        <div class="medaka-tile">
+            <div>
+                <span class="status-tag">Mixed</span>
+                <span class="breed-name">黒豆</span>
+                <p class="observation">屋外越冬組。非常にタフで安定している。</p>
+            </div>
+            <div class="tile-footer">
+                <div class="tile-count">25<span class="unit">pcs</span></div>
+            </div>
+        </div>
+
+        <div class="medaka-tile">
+            <div>
+                <span class="status-tag">Mixed</span>
+                <span class="breed-name">ミックス</span>
+                <p class="observation">メイン水槽でのびのび泳いでいる群。</p>
+            </div>
+            <div class="tile-footer">
+                <div class="tile-count">87<span class="unit">pcs</span></div>
+            </div>
+        </div>
     </div>
 
-    <div class="summary-card">
-        <span class="summary-title">MAIN TANK (MIXED)</span>
-        <div class="total-count">
-            <span class="unit">≈</span> 120 <span class="unit">pcs</span>
-        </div>
-        <div style="font-size: 0.8rem; color: var(--status-healthy);">● Status: Stable</div>
+    <div class="action-bar">
+        <button class="update-btn" onclick="location.reload()">
+            <span>↻</span> UPDATE LOG
+        </button>
     </div>
-
-    <h2 style="font-size: 1rem; opacity: 0.8;">PORTFOLIO</h2>
-
-    <div class="card selection">
-        <div>
-            <span class="breed-name">レックウザ</span>
-            <span class="tag" style="color: var(--accent-breeding);">選抜繁殖中</span>
-        </div>
-        <div class="count-area">
-            <div style="font-size: 1.2rem; font-weight: bold;">8 <span class="unit">pcs</span></div>
-            <div style="font-size: 0.7rem; color: var(--accent-breeding);">Ready to Spawn</div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div>
-            <span class="breed-name">黒豆</span>
-            <span class="tag">メイン水槽混泳</span>
-        </div>
-        <div class="count-area">
-            <div style="font-size: 1.2rem; font-weight: bold;">25 <span class="unit">pcs</span></div>
-            <div style="font-size: 0.7rem; color: var(--accent-water);">Total: +2.4%</div>
-        </div>
-    </div>
-
-    <button class="update-btn">↻ update</button>
 
 </body>
 </html>
