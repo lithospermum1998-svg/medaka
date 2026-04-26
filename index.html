@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MEDAKA LOG</title>
+    <title>MEDAKA LOG - Underwater</title>
     <style>
         :root {
-            --bg-depth: #030712;
-            --glass-panel: rgba(15, 23, 42, 0.7);
+            --bg-depth: #020617;
+            --aqua-deep: #0f172a;
+            --aqua-bright: #1e293b;
             --accent-selection: #fbbf24;
             --accent-main: #38bdf8;
             --text-main: #f1f5f9;
@@ -15,13 +16,13 @@
         }
 
         body {
-            background: radial-gradient(circle at top, #0f172a 0%, var(--bg-depth) 100%);
+            background: radial-gradient(circle at top, #1e293b 0%, var(--bg-depth) 100%);
             background-attachment: fixed;
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, sans-serif;
             margin: 0;
             padding: 20px 16px 100px 16px;
-            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
         header {
@@ -29,7 +30,7 @@
             justify-content: space-between;
             align-items: flex-end;
             margin-bottom: 32px;
-            padding: 0 4px;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
         }
 
         header h1 {
@@ -37,104 +38,101 @@
             font-weight: 800;
             margin: 0;
             line-height: 1.1;
-            background: linear-gradient(to bottom, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .weather-info {
-            text-align: right;
-            font-size: 0.7rem;
-            color: var(--text-dim);
             letter-spacing: 0.05em;
-            line-height: 1.6;
         }
 
-        #weather-display {
-            color: var(--accent-main);
-            font-weight: bold;
-        }
+        .weather-info { text-align: right; font-size: 0.7rem; color: var(--text-dim); }
 
-        .main-summary {
-            background: var(--glass-panel);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 28px;
-            padding: 24px;
-            margin-bottom: 32px;
-        }
-
-        .summary-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--accent-main);
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .summary-count {
-            font-size: 2.8rem;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .unit { font-size: 1rem; opacity: 0.5; margin-left: 4px; }
-
-        .medaka-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
+        /* 水中カードの基本スタイル */
         .medaka-tile {
-            background: var(--glass-panel);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            padding: 16px;
+            padding: 20px;
+            min-height: 150px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 140px;
+            overflow: hidden; /* 水の揺らぎをカード内に収める */
+            box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.05);
         }
 
+        /* 選抜：水面に光が差し込むようなゴールド */
         .medaka-tile.selection {
-            border-top: 4px solid var(--accent-selection);
-            background: rgba(251, 191, 36, 0.03);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            box-shadow: inset 0 0 30px rgba(251, 191, 36, 0.1);
+        }
+
+        /* 🌊 水の揺らぎエフェクト（疑似要素） */
+        .medaka-tile::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: url('https://www.transparenttextures.com/patterns/wave-cut.png'); /* 網目模様のテクスチャ */
+            opacity: 0.05;
+            transform: rotate(30deg);
+            animation: water-flow 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes water-flow {
+            0% { transform: rotate(30deg) translate(0, 0); }
+            100% { transform: rotate(30deg) translate(10%, 10%); }
         }
 
         .status-tag {
             font-size: 0.6rem;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             margin-bottom: 8px;
             display: block;
         }
 
         .breed-name {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .observation {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--text-dim);
-            line-height: 1.4;
+            line-height: 1.5;
+            z-index: 1;
         }
 
         .tile-footer {
-            margin-top: 16px;
             display: flex;
             justify-content: flex-end;
             align-items: baseline;
+            z-index: 1;
         }
 
-        .tile-count { font-size: 1.4rem; font-weight: 800; }
+        .tile-count { font-size: 1.6rem; font-weight: 800; color: #fff; }
+
+        .main-summary {
+            background: linear-gradient(to bottom right, rgba(56, 189, 248, 0.15), rgba(15, 23, 42, 0.8));
+            border-radius: 30px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .summary-count { font-size: 3rem; font-weight: 900; }
+
+        .medaka-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
 
         .action-bar {
             position: fixed;
@@ -146,14 +144,14 @@
         }
 
         .update-btn {
-            background: rgba(255, 255, 255, 0.9);
-            color: #000;
+            background: linear-gradient(to bottom, #fff, #cbd5e1);
+            color: #020617;
             border: none;
-            padding: 14px 28px;
-            border-radius: 30px;
+            padding: 16px 32px;
+            border-radius: 40px;
             font-size: 0.9rem;
-            font-weight: 700;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            font-weight: 800;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
         }
     </style>
 </head>
@@ -162,17 +160,15 @@
     <header>
         <h1>MEDAKA<br>LOG</h1>
         <div class="weather-info">
-            <div id="weather-display">Loading Weather...</div>
+            <div id="weather-display" style="color: var(--accent-main);">Loading...</div>
             <div id="sync-time">Syncing...</div>
         </div>
     </header>
 
     <section class="main-summary">
-        <span class="summary-label">Mixed Main Tank</span>
-        <div class="summary-count">120<span class="unit">pcs</span></div>
-        <div style="font-size: 0.75rem; margin-top: 12px; color: var(--accent-main);">
-            Gravel Base / Outdoor Tank
-        </div>
+        <span style="font-size: 0.7rem; letter-spacing: 0.2em; color: var(--accent-main);">MAIN CONTAINER</span>
+        <div class="summary-count">120<span style="font-size: 1rem; opacity: 0.6;">pcs</span></div>
+        <p style="font-size: 0.75rem; color: var(--text-dim); margin: 10px 0 0 0;">砂利床 / 屋外メインタンク</p>
     </section>
 
     <div class="medaka-grid">
@@ -180,10 +176,10 @@
             <div>
                 <span class="status-tag" style="color: var(--accent-selection);">Selection</span>
                 <span class="breed-name">レックウザ</span>
-                <p class="observation">加温・ペアリング開始。</p>
+                <p class="observation">水温24度。体外光の伸びを確認。採卵準備。</p>
             </div>
             <div class="tile-footer">
-                <div class="tile-count">8<span class="unit">pcs</span></div>
+                <div class="tile-count">8<span style="font-size: 0.8rem; opacity: 0.5;">pcs</span></div>
             </div>
         </div>
 
@@ -191,10 +187,10 @@
             <div>
                 <span class="status-tag">Mixed</span>
                 <span class="breed-name">黒豆</span>
-                <p class="observation">メイン水槽へ合流済み。</p>
+                <p class="observation">砂利の上での色上がり良好。非常に元気。</p>
             </div>
             <div class="tile-footer">
-                <div class="tile-count">25<span class="unit">pcs</span></div>
+                <div class="tile-count">25<span style="font-size: 0.8rem; opacity: 0.5;">pcs</span></div>
             </div>
         </div>
     </div>
@@ -204,32 +200,21 @@
     </div>
 
     <script>
-        // --- 設定エリア ---
-        const API_KEY = '4f2152916a220ca8c65df5671fe943fb';
-        const CITY = 'Kiyose'; 
+        const API_KEY = 'ここにAPIキーを貼り付け';
+        const CITY = 'Kiyose';
 
         async function updateWeather() {
             const weatherDisp = document.getElementById('weather-display');
             const syncDisp = document.getElementById('sync-time');
-            
             try {
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric&lang=ja`);
-                if (!response.ok) throw new Error('Network error');
-                
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric`);
                 const data = await response.json();
-                const temp = Math.round(data.main.temp);
-                const condition = data.weather[0].main;
-                const humid = data.main.humidity;
-
-                weatherDisp.innerText = `${condition} ${temp}°C / Humid: ${humid}%`;
+                weatherDisp.innerText = `${data.weather[0].main} ${Math.round(data.main.temp)}°C`;
                 syncDisp.innerText = `SYNC: ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-            } catch (error) {
-                weatherDisp.innerText = "Weather: N/A";
-                syncDisp.innerText = "Check API Key";
+            } catch (e) {
+                weatherDisp.innerText = "Connection Error";
             }
         }
-
-        // 初回読み込み
         updateWeather();
     </script>
 </body>
