@@ -15,650 +15,199 @@
     --glass: rgba(255,255,255,0.04);
     --glass-border: rgba(255,255,255,0.08);
     --water: #38bdf8;
-    --water-dim: rgba(56,189,248,0.15);
     --gold: #f59e0b;
-    --gold-dim: rgba(245,158,11,0.15);
     --text: #e2e8f0;
     --text-dim: #4a6080;
     --text-mid: #7a90a8;
     --green: #34d399;
     --red: #f87171;
   }
-
-- { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-background: var(–ink);
-color: var(–text);
-font-family: ‘Zen Kaku Gothic New’, sans-serif;
-min-height: 100vh;
-overflow-x: hidden;
-}
-
-/* ======= 深海背景 ======= */
-.ocean-bg {
-position: fixed;
-inset: 0;
-z-index: 0;
-pointer-events: none;
-overflow: hidden;
-}
-
-.ocean-bg::before {
-content: ‘’;
-position: absolute;
-inset: 0;
-background:
-radial-gradient(ellipse 80% 50% at 50% -10%, rgba(56,189,248,0.12) 0%, transparent 70%),
-radial-gradient(ellipse 60% 40% at 80% 100%, rgba(14,30,60,0.8) 0%, transparent 60%),
-linear-gradient(180deg, #04080f 0%, #050d1a 40%, #04080f 100%);
-}
-
-/* 光の筋 */
-.light-ray {
-position: absolute;
-top: -10%;
-width: 2px;
-height: 60%;
-background: linear-gradient(180deg, rgba(56,189,248,0.15) 0%, transparent 100%);
-filter: blur(4px);
-animation: ray-sway 8s ease-in-out infinite;
-transform-origin: top center;
-}
-.light-ray:nth-child(1) { left: 20%; animation-delay: 0s; width: 3px; height: 50%; }
-.light-ray:nth-child(2) { left: 35%; animation-delay: -2s; opacity: 0.6; }
-.light-ray:nth-child(3) { left: 55%; animation-delay: -4s; width: 4px; height: 45%; }
-.light-ray:nth-child(4) { left: 72%; animation-delay: -6s; opacity: 0.5; }
-.light-ray:nth-child(5) { left: 85%; animation-delay: -1s; width: 2px; height: 35%; }
-
-@keyframes ray-sway {
-0%, 100% { transform: rotate(-3deg); opacity: 0.8; }
-50% { transform: rotate(3deg); opacity: 0.4; }
-}
-
-/* 泡 */
-.bubble {
-position: absolute;
-border-radius: 50%;
-border: 1px solid rgba(56,189,248,0.2);
-animation: bubble-rise linear infinite;
-}
-@keyframes bubble-rise {
-0% { transform: translateY(0) translateX(0); opacity: 0; }
-10% { opacity: 1; }
-90% { opacity: 0.5; }
-100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
-}
-
-/* 水面の波紋ライン */
-.waterline {
-position: absolute;
-top: 0;
-left: -100%;
-width: 300%;
-height: 2px;
-background: linear-gradient(90deg, transparent, rgba(56,189,248,0.4), rgba(56,189,248,0.2), transparent);
-animation: waterline-move 12s linear infinite;
-filter: blur(1px);
-}
-@keyframes waterline-move {
-0% { transform: translateX(0) scaleY(1); }
-50% { transform: translateX(10%) scaleY(2); }
-100% { transform: translateX(0) scaleY(1); }
-}
-
-/* ======= レイアウト ======= */
-.app {
-position: relative;
-z-index: 1;
-max-width: 480px;
-margin: 0 auto;
-padding: 0 0 120px 0;
-}
-
-/* ======= ヘッダー ======= */
-.header {
-padding: 48px 24px 24px;
-display: flex;
-justify-content: space-between;
-align-items: flex-start;
-}
-
-.logo {
-display: flex;
-flex-direction: column;
-gap: 2px;
-}
-
-.logo-label {
-font-family: ‘Space Mono’, monospace;
-font-size: 0.55rem;
-letter-spacing: 0.3em;
-color: var(–water);
-opacity: 0.7;
-text-transform: uppercase;
-}
-
-.logo-title {
-font-family: ‘Space Mono’, monospace;
-font-size: 2rem;
-font-weight: 700;
-letter-spacing: 0.1em;
-line-height: 1;
-background: linear-gradient(135deg, #fff 0%, var(–water) 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-}
-
-.logo-sub {
-font-size: 0.6rem;
-color: var(–text-dim);
-letter-spacing: 0.1em;
-margin-top: 4px;
-}
-
-.weather-block {
-text-align: right;
-}
-
-.weather-main {
-font-family: ‘Space Mono’, monospace;
-font-size: 1.1rem;
-font-weight: 700;
-color: var(–water);
-}
-
-.weather-city {
-font-size: 0.55rem;
-color: var(–text-dim);
-letter-spacing: 0.15em;
-margin-top: 2px;
-}
-
-.sync-time {
-font-family: ‘Space Mono’, monospace;
-font-size: 0.5rem;
-color: var(–text-dim);
-margin-top: 6px;
-}
-
-/* ======= メインサマリー ======= */
-.main-tank {
-margin: 0 16px 8px;
-background: linear-gradient(135deg, rgba(56,189,248,0.08) 0%, rgba(5,13,26,0.9) 60%);
-border: 1px solid rgba(56,189,248,0.2);
-border-radius: 28px;
-padding: 28px;
-position: relative;
-overflow: hidden;
-}
-
-.main-tank::after {
-content: ‘’;
-position: absolute;
-bottom: 0;
-left: 0;
-right: 0;
-height: 3px;
-background: linear-gradient(90deg, transparent, var(–water), transparent);
-opacity: 0.4;
-}
-
-.tank-label {
-font-family: ‘Space Mono’, monospace;
-font-size: 0.55rem;
-letter-spacing: 0.25em;
-color: var(–water);
-text-transform: uppercase;
-margin-bottom: 16px;
-display: flex;
-align-items: center;
-gap: 8px;
-}
-
-.tank-label::before {
-content: ‘’;
-display: inline-block;
-width: 6px;
-height: 6px;
-border-radius: 50%;
-background: var(–water);
-animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-0%, 100% { opacity: 1; transform: scale(1); }
-50% { opacity: 0.3; transform: scale(0.7); }
-}
-
-.tank-count-row {
-display: flex;
-align-items: flex-end;
-gap: 12px;
-margin-bottom: 12px;
-}
-
-.tank-count {
-font-family: ‘Space Mono’, monospace;
-font-size: 4.5rem;
-font-weight: 700;
-line-height: 1;
-color: #fff;
-}
-
-.tank-count-unit {
-font-size: 1rem;
-color: var(–text-dim);
-margin-bottom: 12px;
-}
-
-.tank-meta {
-font-size: 0.7rem;
-color: var(–text-mid);
-display: flex;
-gap: 16px;
-}
-
-.tank-meta span {
-display: flex;
-align-items: center;
-gap: 4px;
-}
-
-.tank-meta span::before {
-content: ‘▸’;
-color: var(–water);
-font-size: 0.55rem;
-}
-
-/* ======= セクションヘッダー ======= */
-.section-head {
-padding: 24px 24px 12px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-
-.section-title {
-font-family: ‘Space Mono’, monospace;
-font-size: 0.6rem;
-letter-spacing: 0.25em;
-color: var(–text-dim);
-text-transform: uppercase;
-}
-
-.section-count {
-font-family: ‘Space Mono’, monospace;
-font-size: 0.6rem;
-color: var(–text-dim);
-}
-
-/* ======= グリッド ======= */
-.grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 12px;
-padding: 0 16px;
-}
-
-.grid.single { grid-template-columns: 1fr; }
-
-/* ======= メダカタイル ======= */
-.tile {
-background: var(–glass);
-border: 1px solid var(–glass-border);
-border-radius: 20px;
-padding: 18px;
-display: flex;
-flex-direction: column;
-gap: 10px;
-position: relative;
-overflow: hidden;
-transition: border-color 0.3s, transform 0.2s;
-min-height: 160px;
-cursor: pointer;
-}
-
-.tile:active { transform: scale(0.97); }
-
-.tile::before {
-content: ‘’;
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 1px;
-background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-}
-
-/* 選抜ゴールド */
-.tile.selection {
-border-color: rgba(245,158,11,0.25);
-background: linear-gradient(135deg, rgba(245,158,11,0.06) 0%, var(–glass) 100%);
-}
-
-.tile.selection::after {
-content: ‘’;
-position: absolute;
-top: -20px; right: -20px;
-width: 80px; height: 80px;
-border-radius: 50%;
-background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
-}
-
-/* 繁殖中 */
-.tile.breeding {
-border-color: rgba(52,211,153,0.25);
-background: linear-gradient(135deg, rgba(52,211,153,0.05) 0%, var(–glass) 100%);
-}
-
-/* タグ */
-.tag {
-font-family: ‘Space Mono’, monospace;
-font-size: 0.5rem;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-font-weight: 700;
-padding: 3px 8px;
-border-radius: 4px;
-display: inline-block;
-width: fit-content;
-}
-
-.tag.selection { background: rgba(245,158,11,0.15); color: var(–gold); }
-.tag.mixed { background: rgba(56,189,248,0.1); color: var(–water); }
-.tag.breeding { background: rgba(52,211,153,0.1); color: var(–green); }
-.tag.rest { background: rgba(148,163,184,0.1); color: var(–text-mid); }
-
-.breed-name {
-font-size: 1.05rem;
-font-weight: 700;
-line-height: 1.2;
-color: #fff;
-}
-
-.obs {
-font-size: 0.68rem;
-color: var(–text-mid);
-line-height: 1.6;
-flex: 1;
-}
-
-.tile-footer {
-display: flex;
-justify-content: space-between;
-align-items: flex-end;
-margin-top: auto;
-}
-
-.tile-count {
-font-family: ‘Space Mono’, monospace;
-font-size: 1.8rem;
-font-weight: 700;
-color: #fff;
-line-height: 1;
-}
-
-.tile-count span {
-font-size: 0.65rem;
-color: var(–text-dim);
-margin-left: 2px;
-}
-
-.tile-icon {
-font-size: 1.4rem;
-opacity: 0.5;
-}
-
-/* ======= ログセクション ======= */
-.log-section {
-padding: 0 16px;
-margin-top: 8px;
-}
-
-.log-entry {
-display: flex;
-gap: 14px;
-padding: 14px 0;
-border-bottom: 1px solid var(–glass-border);
-align-items: flex-start;
-}
-
-.log-date {
-font-family: ‘Space Mono’, monospace;
-font-size: 0.55rem;
-color: var(–text-dim);
-line-height: 1.6;
-white-space: nowrap;
-min-width: 52px;
-}
-
-.log-dot {
-width: 6px;
-height: 6px;
-border-radius: 50%;
-margin-top: 5px;
-flex-shrink: 0;
-}
-
-.log-dot.note { background: var(–water); }
-.log-dot.egg { background: var(–gold); }
-.log-dot.death { background: var(–red); }
-.log-dot.hatch { background: var(–green); }
-
-.log-text {
-font-size: 0.72rem;
-color: var(–text-mid);
-line-height: 1.6;
-}
-
-.log-text strong { color: var(–text); font-weight: 700; }
-
-/* ======= アクションバー ======= */
-.action-bar {
-position: fixed;
-bottom: 0;
-left: 0; right: 0;
-padding: 16px 24px 32px;
-background: linear-gradient(0deg, var(–ink) 60%, transparent);
-display: flex;
-gap: 12px;
-justify-content: center;
-z-index: 100;
-}
-
-.btn-primary {
-background: linear-gradient(135deg, var(–water) 0%, #0ea5e9 100%);
-color: var(–ink);
-border: none;
-padding: 14px 28px;
-border-radius: 40px;
-font-family: ‘Space Mono’, monospace;
-font-size: 0.7rem;
-font-weight: 700;
-letter-spacing: 0.1em;
-cursor: pointer;
-box-shadow: 0 8px 24px rgba(56,189,248,0.3);
-transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.btn-primary:active {
-transform: scale(0.96);
-box-shadow: 0 4px 12px rgba(56,189,248,0.2);
-}
-
-.btn-icon {
-background: var(–glass);
-border: 1px solid var(–glass-border);
-color: var(–text);
-width: 50px;
-height: 50px;
-border-radius: 50%;
-font-size: 1.1rem;
-cursor: pointer;
-display: flex;
-align-items: center;
-justify-content: center;
-transition: background 0.15s;
-}
-
-.btn-icon:active { background: rgba(255,255,255,0.1); }
-
-/* ======= モーダル ======= */
-.modal-overlay {
-position: fixed;
-inset: 0;
-background: rgba(4,8,15,0.85);
-backdrop-filter: blur(12px);
-z-index: 200;
-display: flex;
-align-items: flex-end;
-opacity: 0;
-pointer-events: none;
-transition: opacity 0.3s;
-}
-
-.modal-overlay.open {
-opacity: 1;
-pointer-events: all;
-}
-
-.modal {
-width: 100%;
-max-width: 480px;
-margin: 0 auto;
-background: var(–mid);
-border: 1px solid var(–glass-border);
-border-radius: 28px 28px 0 0;
-padding: 28px 24px 48px;
-transform: translateY(100%);
-transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.modal-overlay.open .modal {
-transform: translateY(0);
-}
-
-.modal-handle {
-width: 40px;
-height: 4px;
-background: var(–glass-border);
-border-radius: 2px;
-margin: 0 auto 24px;
-}
-
-.modal-title {
-font-size: 1.2rem;
-font-weight: 700;
-margin-bottom: 4px;
-}
-
-.modal-breed {
-font-family: ‘Space Mono’, monospace;
-font-size: 0.6rem;
-color: var(–text-dim);
-letter-spacing: 0.15em;
-margin-bottom: 24px;
-}
-
-.count-editor {
-display: flex;
-align-items: center;
-justify-content: space-between;
-background: var(–surface);
-border-radius: 16px;
-padding: 16px 20px;
-margin-bottom: 20px;
-}
-
-.count-btn {
-width: 40px; height: 40px;
-border-radius: 50%;
-border: 1px solid var(–glass-border);
-background: var(–glass);
-color: var(–text);
-font-size: 1.2rem;
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-transition: background 0.15s;
-}
-
-.count-btn:active { background: rgba(255,255,255,0.1); }
-
-.count-display {
-font-family: ‘Space Mono’, monospace;
-font-size: 2.5rem;
-font-weight: 700;
-color: #fff;
-}
-
-.note-input {
-width: 100%;
-background: var(–surface);
-border: 1px solid var(–glass-border);
-border-radius: 12px;
-padding: 14px 16px;
-color: var(–text);
-font-family: ‘Zen Kaku Gothic New’, sans-serif;
-font-size: 0.8rem;
-resize: none;
-outline: none;
-margin-bottom: 16px;
-}
-
-.note-input:focus { border-color: rgba(56,189,248,0.3); }
-.note-input::placeholder { color: var(–text-dim); }
-
-.modal-save {
-width: 100%;
-background: linear-gradient(135deg, var(–water) 0%, #0ea5e9 100%);
-color: var(–ink);
-border: none;
-padding: 16px;
-border-radius: 14px;
-font-family: ‘Space Mono’, monospace;
-font-size: 0.75rem;
-font-weight: 700;
-letter-spacing: 0.1em;
-cursor: pointer;
-}
-
-/* ======= アニメーション登場 ======= */
-.fade-up {
-opacity: 0;
-transform: translateY(16px);
-animation: fadeUp 0.5s ease forwards;
-}
-
-@keyframes fadeUp {
-to { opacity: 1; transform: translateY(0); }
-}
-
-.tile { animation: fadeUp 0.5s ease forwards; opacity: 0; }
-.tile:nth-child(1) { animation-delay: 0.05s; }
-.tile:nth-child(2) { animation-delay: 0.1s; }
-.tile:nth-child(3) { animation-delay: 0.15s; }
-.tile:nth-child(4) { animation-delay: 0.2s; }
-
-/* メダカ水彩シルエット */
-.fish-silhouette {
-position: absolute;
-opacity: 0.04;
-font-size: 2.5rem;
-bottom: 12px;
-right: 12px;
-animation: fish-float 6s ease-in-out infinite;
-pointer-events: none;
-}
-
-@keyframes fish-float {
-0%, 100% { transform: translateY(0) scaleX(1); }
-50% { transform: translateY(-6px) scaleX(1); }
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--ink); color: var(--text); font-family: 'Zen Kaku Gothic New', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  .ocean-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .ocean-bg::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(56,189,248,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(14,30,60,0.8) 0%, transparent 60%),
+                linear-gradient(180deg, #04080f 0%, #050d1a 40%, #04080f 100%);
+  }
+  .light-ray {
+    position: absolute; top: -10%; width: 2px; height: 60%;
+    background: linear-gradient(180deg, rgba(56,189,248,0.15) 0%, transparent 100%);
+    filter: blur(4px); animation: ray-sway 8s ease-in-out infinite; transform-origin: top center;
+  }
+  .light-ray:nth-child(1) { left: 20%; animation-delay: 0s; width: 3px; height: 50%; }
+  .light-ray:nth-child(2) { left: 35%; animation-delay: -2s; opacity: 0.6; }
+  .light-ray:nth-child(3) { left: 55%; animation-delay: -4s; width: 4px; height: 45%; }
+  .light-ray:nth-child(4) { left: 72%; animation-delay: -6s; opacity: 0.5; }
+  .light-ray:nth-child(5) { left: 85%; animation-delay: -1s; }
+  @keyframes ray-sway {
+    0%, 100% { transform: rotate(-3deg); opacity: 0.8; }
+    50% { transform: rotate(3deg); opacity: 0.4; }
+  }
+  .bubble { position: absolute; border-radius: 50%; border: 1px solid rgba(56,189,248,0.2); animation: bubble-rise linear infinite; }
+  @keyframes bubble-rise {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+  }
+  .waterline {
+    position: absolute; top: 0; left: -100%; width: 300%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(56,189,248,0.4), rgba(56,189,248,0.2), transparent);
+    animation: waterline-move 12s linear infinite; filter: blur(1px);
+  }
+  @keyframes waterline-move {
+    0%, 100% { transform: translateX(0) scaleY(1); }
+    50% { transform: translateX(10%) scaleY(2); }
+  }
+  .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 0 120px 0; }
+  .header { padding: 48px 24px 24px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .logo { display: flex; flex-direction: column; gap: 2px; }
+  .logo-label { font-family: 'Space Mono', monospace; font-size: 0.55rem; letter-spacing: 0.3em; color: var(--water); opacity: 0.7; text-transform: uppercase; }
+  .logo-title {
+    font-family: 'Space Mono', monospace; font-size: 2rem; font-weight: 700; letter-spacing: 0.1em; line-height: 1;
+    background: linear-gradient(135deg, #fff 0%, var(--water) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .logo-sub { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.1em; margin-top: 4px; }
+  .weather-block { text-align: right; }
+  .weather-main { font-family: 'Space Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--water); }
+  .weather-city { font-size: 0.55rem; color: var(--text-dim); letter-spacing: 0.15em; margin-top: 2px; }
+  .sync-time { font-family: 'Space Mono', monospace; font-size: 0.5rem; color: var(--text-dim); margin-top: 6px; }
+  .main-tank {
+    margin: 0 16px 8px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.08) 0%, rgba(5,13,26,0.9) 60%);
+    border: 1px solid rgba(56,189,248,0.2); border-radius: 28px; padding: 28px; position: relative; overflow: hidden;
+  }
+  .main-tank::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--water), transparent); opacity: 0.4;
+  }
+  .tank-label {
+    font-family: 'Space Mono', monospace; font-size: 0.55rem; letter-spacing: 0.25em; color: var(--water);
+    text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .tank-label::before {
+    content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--water); animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.7); }
+  }
+  .tank-count-row { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 12px; }
+  .tank-count { font-family: 'Space Mono', monospace; font-size: 4.5rem; font-weight: 700; line-height: 1; color: #fff; }
+  .tank-count-unit { font-size: 1rem; color: var(--text-dim); margin-bottom: 12px; }
+  .tank-meta { font-size: 0.7rem; color: var(--text-mid); display: flex; gap: 16px; }
+  .tank-meta span { display: flex; align-items: center; gap: 4px; }
+  .tank-meta span::before { content: '▸'; color: var(--water); font-size: 0.55rem; }
+  .fish-silhouette { position: absolute; opacity: 0.04; font-size: 2.5rem; bottom: 12px; right: 12px; animation: fish-float 6s ease-in-out infinite; pointer-events: none; }
+  @keyframes fish-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .section-head { padding: 24px 24px 12px; display: flex; justify-content: space-between; align-items: center; }
+  .section-title { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.25em; color: var(--text-dim); text-transform: uppercase; }
+  .section-count { font-family: 'Space Mono', monospace; font-size: 0.6rem; color: var(--text-dim); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; }
+  .tile {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px;
+    display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden;
+    transition: border-color 0.3s, transform 0.2s; min-height: 160px; cursor: pointer;
+    opacity: 0; animation: fadeUp 0.5s ease forwards;
+  }
+  .tile:nth-child(1) { animation-delay: 0.05s; }
+  .tile:nth-child(2) { animation-delay: 0.10s; }
+  .tile:nth-child(3) { animation-delay: 0.15s; }
+  .tile:nth-child(4) { animation-delay: 0.20s; }
+  .tile:nth-child(n+5) { animation-delay: 0.25s; }
+  .tile:active { transform: scale(0.97); }
+  .tile::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  }
+  .tile.selection { border-color: rgba(245,158,11,0.25); background: linear-gradient(135deg, rgba(245,158,11,0.06) 0%, var(--glass) 100%); }
+  .tile.selection::after {
+    content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px;
+    border-radius: 50%; background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
+  }
+  .tile.breeding { border-color: rgba(52,211,153,0.25); background: linear-gradient(135deg, rgba(52,211,153,0.05) 0%, var(--glass) 100%); }
+  .tag { font-family: 'Space Mono', monospace; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 4px; display: inline-block; width: fit-content; }
+  .tag.selection { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .tag.mixed { background: rgba(56,189,248,0.10); color: var(--water); }
+  .tag.breeding { background: rgba(52,211,153,0.10); color: var(--green); }
+  .tag.rest { background: rgba(148,163,184,0.10); color: var(--text-mid); }
+  .breed-name { font-size: 1.05rem; font-weight: 700; line-height: 1.2; color: #fff; }
+  .obs { font-size: 0.68rem; color: var(--text-mid); line-height: 1.6; flex: 1; }
+  .tile-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+  .tile-count { font-family: 'Space Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #fff; line-height: 1; }
+  .tile-count span { font-size: 0.65rem; color: var(--text-dim); margin-left: 2px; }
+  .tile-icon { font-size: 1.4rem; opacity: 0.5; }
+  .log-section { padding: 0 16px; margin-top: 8px; }
+  .log-entry { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--glass-border); align-items: flex-start; }
+  .log-date { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--text-dim); line-height: 1.6; white-space: nowrap; min-width: 52px; }
+  .log-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .log-dot.note { background: var(--water); }
+  .log-dot.egg { background: var(--gold); }
+  .log-dot.death { background: var(--red); }
+  .log-dot.hatch { background: var(--green); }
+  .log-text { font-size: 0.72rem; color: var(--text-mid); line-height: 1.6; }
+  .log-text strong { color: var(--text); font-weight: 700; }
+  .action-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 24px 32px;
+    background: linear-gradient(0deg, var(--ink) 60%, transparent);
+    display: flex; gap: 12px; justify-content: center; z-index: 100;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--water) 0%, #0ea5e9 100%); color: var(--ink); border: none;
+    padding: 14px 28px; border-radius: 40px; font-family: 'Space Mono', monospace; font-size: 0.7rem;
+    font-weight: 700; letter-spacing: 0.1em; cursor: pointer; box-shadow: 0 8px 24px rgba(56,189,248,0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:active { transform: scale(0.96); box-shadow: 0 4px 12px rgba(56,189,248,0.2); }
+  .btn-icon {
+    background: var(--glass); border: 1px solid var(--glass-border); color: var(--text);
+    width: 50px; height: 50px; border-radius: 50%; font-size: 1.1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+  }
+  .btn-icon:active { background: rgba(255,255,255,0.1); }
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(4,8,15,0.85); backdrop-filter: blur(12px);
+    z-index: 200; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    width: 100%; max-width: 480px; margin: 0 auto; background: var(--mid);
+    border: 1px solid var(--glass-border); border-radius: 28px 28px 0 0; padding: 28px 24px 48px;
+    transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-handle { width: 40px; height: 4px; background: var(--glass-border); border-radius: 2px; margin: 0 auto 24px; }
+  .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .modal-breed { font-family: 'Space Mono', monospace; font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 24px; }
+  .count-editor { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; }
+  .count-btn {
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--glass-border);
+    background: var(--glass); color: var(--text); font-size: 1.2rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+  }
+  .count-btn:active { background: rgba(255,255,255,0.1); }
+  .count-display { font-family: 'Space Mono', monospace; font-size: 2.5rem; font-weight: 700; color: #fff; }
+  .note-input {
+    width: 100%; background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px;
+    padding: 14px 16px; color: var(--text); font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 0.8rem; resize: none; outline: none; margin-bottom: 16px;
+  }
+  .note-input:focus { border-color: rgba(56,189,248,0.3); }
+  .note-input::placeholder { color: var(--text-dim); }
+  .modal-save {
+    width: 100%; background: linear-gradient(135deg, var(--water) 0%, #0ea5e9 100%); color: var(--ink);
+    border: none; padding: 16px; border-radius: 14px; font-family: 'Space Mono', monospace;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; cursor: pointer;
+  }
+  .fade-up { opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s ease forwards; }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 </style>
-
 </head>
 <body>
-
 <div class="ocean-bg">
   <div class="waterline"></div>
   <div class="light-ray"></div>
@@ -667,11 +216,7 @@ pointer-events: none;
   <div class="light-ray"></div>
   <div class="light-ray"></div>
 </div>
-
 <div class="app">
-
-  <!-- ヘッダー -->
-
   <header class="header fade-up" style="animation-delay:0s">
     <div class="logo">
       <span class="logo-label">Breeding Log</span>
@@ -679,16 +224,13 @@ pointer-events: none;
       <span class="logo-sub">清瀬メダカ農場 / 2025</span>
     </div>
     <div class="weather-block">
-      <div class="weather-main" id="weather-display">―</div>
+      <div class="weather-main" id="weather-display">&#x2015;</div>
       <div class="weather-city">KIYOSE, TOKYO</div>
-      <div class="sync-time" id="sync-time">LAST SYNC: ―</div>
+      <div class="sync-time" id="sync-time">LAST SYNC: &#x2015;</div>
     </div>
   </header>
-
-  <!-- メイン水槽 -->
-
   <section class="main-tank fade-up" style="animation-delay:0.08s">
-    <div class="tank-label">Main Container · 屋外砂利床</div>
+    <div class="tank-label">Main Container &#xB7; 屋外砂利床</div>
     <div class="tank-count-row">
       <div class="tank-count" id="main-count">120</div>
       <div class="tank-count-unit">pcs</div>
@@ -696,226 +238,179 @@ pointer-events: none;
     <div class="tank-meta">
       <span>砂利床</span>
       <span>屋外設置</span>
-      <span id="temp-display">水温 ―℃</span>
+      <span id="temp-display">水温 &#x2015;&#x2103;</span>
     </div>
-    <div class="fish-silhouette">🐟</div>
+    <div class="fish-silhouette">&#x1F41F;</div>
   </section>
-
-  <!-- 選抜品種 -->
-
   <div class="section-head fade-up" style="animation-delay:0.12s">
     <span class="section-title">Individual Tanks</span>
     <span class="section-count" id="tank-total">0 tanks</span>
   </div>
-
-  <div class="grid" id="tile-grid">
-    <!-- JSで生成 -->
-  </div>
-
-  <!-- ログ -->
-
-  <div class="section-head fade-up" style="animation-delay:0.35s" style="margin-top:8px">
+  <div class="grid" id="tile-grid"></div>
+  <div class="section-head fade-up" style="animation-delay:0.35s">
     <span class="section-title">Recent Log</span>
   </div>
-
-  <div class="log-section fade-up" style="animation-delay:0.4s" id="log-list">
-    <!-- JSで生成 -->
-  </div>
-
+  <div class="log-section fade-up" style="animation-delay:0.4s" id="log-list"></div>
 </div>
-
-<!-- アクションバー -->
-
 <div class="action-bar">
-  <button class="btn-icon" onclick="openAddModal()" title="追加">＋</button>
-  <button class="btn-primary" onclick="updateWeather()">↻ UPDATE LOG</button>
-  <button class="btn-icon" onclick="toggleLog()" title="ログ">≡</button>
+  <button class="btn-icon" onclick="openAddModal()">&#xFF0B;</button>
+  <button class="btn-primary" onclick="updateWeather()">&#x21BB; UPDATE LOG</button>
+  <button class="btn-icon" onclick="toggleLog()">&#x2261;</button>
 </div>
-
-<!-- タイル編集モーダル -->
-
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
-  <div class="modal" id="modal-content">
+  <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="modal-title">レックウザ</div>
-    <div class="modal-breed" id="modal-breed">SELECTION · 選抜個体</div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-breed" id="modal-breed"></div>
     <div class="count-editor">
-      <button class="count-btn" onclick="changeCount(-1)">−</button>
-      <div class="count-display" id="modal-count">8</div>
-      <button class="count-btn" onclick="changeCount(1)">＋</button>
+      <button class="count-btn" onclick="changeCount(-1)">&#x2212;</button>
+      <div class="count-display" id="modal-count">0</div>
+      <button class="count-btn" onclick="changeCount(1)">&#xFF0B;</button>
     </div>
     <textarea class="note-input" id="modal-note" rows="3" placeholder="観察メモを入力..."></textarea>
     <button class="modal-save" onclick="saveModal()">SAVE LOG</button>
   </div>
 </div>
-
 <script>
-// ======= データ =======
-let tanks = [
-  { id: 1, name: 'レックウザ', tag: 'selection', count: 8, obs: '水温24度。体外光の伸びを確認。採卵準備中。' },
-  { id: 2, name: '黒豆', tag: 'mixed', count: 25, obs: '砂利床での色上がり良好。非常に元気。' },
-  { id: 3, name: '三色ラメ', tag: 'breeding', count: 12, obs: '稚魚5匹確認。産卵継続中。' },
-  { id: 4, name: 'ヒメダカ', tag: 'rest', count: 40, obs: '越冬明け。給餌再開。状態良好。' },
+var tanks = [
+  { id: 1, name: 'レックウザ', tag: 'selection', count: 8,  obs: '水温24度。体外光の伸びを確認。採卵準備中。' },
+  { id: 2, name: '黒豆',       tag: 'mixed',     count: 25, obs: '砂利床での色上がり良好。非常に元気。' },
+  { id: 3, name: '三色ラメ',   tag: 'breeding',  count: 12, obs: '稚魚5匹確認。産卵継続中。' },
+  { id: 4, name: 'ヒメダカ',   tag: 'rest',      count: 40, obs: '越冬明け。給餌再開。状態良好。' }
 ];
-
-let logs = [
-  { date: '04/28', type: 'egg', text: '<strong>レックウザ</strong> 採卵 — 卵14粒確認' },
+var logs = [
+  { date: '04/28', type: 'egg',   text: '<strong>レックウザ</strong> 採卵 — 卵14粒確認' },
   { date: '04/27', type: 'hatch', text: '<strong>三色ラメ</strong> 稚魚孵化 5匹確認' },
-  { date: '04/26', type: 'note', text: '<strong>黒豆</strong> 水換え完了 / 状態良好' },
-  { date: '04/24', type: 'death', text: '<strong>レックウザ</strong> 1匹落ち。残8匹。' },
+  { date: '04/26', type: 'note',  text: '<strong>黒豆</strong> 水換え完了 / 状態良好' },
+  { date: '04/24', type: 'death', text: '<strong>レックウザ</strong> 1匹落ち。残8匹。' }
 ];
+var editTarget = null;
+var tempCount = 0;
+var logVisible = true;
+var TAG_LABELS = { selection: 'Selection', mixed: 'Mixed', breeding: 'Breeding', rest: 'Rest' };
 
-let editTarget = null;
-let tempCount = 0;
-let logVisible = true;
-
-const TAG_LABELS = { selection: 'Selection', mixed: 'Mixed', breeding: 'Breeding', rest: 'Rest' };
-
-// ======= 描画 =======
 function renderTiles() {
-  const grid = document.getElementById('tile-grid');
-  grid.innerHTML = '';
-  tanks.forEach(t => {
-    const div = document.createElement('div');
-    div.className = `tile ${t.tag}`;
-    div.innerHTML = `
-      <span class="tag ${t.tag}">${TAG_LABELS[t.tag]}</span>
-      <div class="breed-name">${t.name}</div>
-      <div class="obs">${t.obs}</div>
-      <div class="tile-footer">
-        <div class="tile-count">${t.count}<span>pcs</span></div>
-        <div class="tile-icon">🐟</div>
-      </div>
-    `;
-    div.addEventListener('click', () => openEditModal(t.id));
-    grid.appendChild(div);
-  });
-  document.getElementById('tank-total').textContent = `${tanks.length} tanks`;
-
-  // メイン合計
-  const total = tanks.reduce((s, t) => s + t.count, 0) +
-    parseInt(document.getElementById('main-count').textContent || 0);
+var grid = document.getElementById(‘tile-grid’);
+grid.innerHTML = ‘’;
+tanks.forEach(function(t) {
+var div = document.createElement(‘div’);
+div.className = ‘tile ’ + t.tag;
+div.innerHTML =
+‘<span class="tag ' + t.tag + '">’ + TAG_LABELS[t.tag] + ‘</span>’ +
+‘<div class="breed-name">’ + t.name + ‘</div>’ +
+‘<div class="obs">’ + t.obs + ‘</div>’ +
+‘<div class="tile-footer">’ +
+‘<div class="tile-count">’ + t.count + ‘<span>pcs</span></div>’ +
+‘<div class="tile-icon">🐟</div>’ +
+‘</div>’;
+div.addEventListener(‘click’, (function(id){ return function(){ openEditModal(id); }; })(t.id));
+grid.appendChild(div);
+});
+document.getElementById(‘tank-total’).textContent = tanks.length + ’ tanks’;
 }
 
 function renderLogs() {
-  const list = document.getElementById('log-list');
-  if (!logVisible) { list.style.display = 'none'; return; }
-  list.style.display = '';
-  list.innerHTML = logs.map(l => `
-    <div class="log-entry">
-      <div class="log-date">${l.date}</div>
-      <div class="log-dot ${l.type}"></div>
-      <div class="log-text">${l.text}</div>
-    </div>
-  `).join('');
+var list = document.getElementById(‘log-list’);
+if (!logVisible) { list.style.display = ‘none’; return; }
+list.style.display = ‘’;
+list.innerHTML = logs.map(function(l) {
+return ‘<div class="log-entry"><div class="log-date">’ + l.date + ‘</div>’ +
+‘<div class="log-dot ' + l.type + '"></div>’ +
+‘<div class="log-text">’ + l.text + ‘</div></div>’;
+}).join(’’);
 }
 
-// ======= モーダル =======
 function openEditModal(id) {
-  editTarget = tanks.find(t => t.id === id);
-  if (!editTarget) return;
-  tempCount = editTarget.count;
-  document.getElementById('modal-title').textContent = editTarget.name;
-  document.getElementById('modal-breed').textContent = `${TAG_LABELS[editTarget.tag].toUpperCase()} · 個体記録`;
-  document.getElementById('modal-count').textContent = tempCount;
-  document.getElementById('modal-note').value = '';
-  document.getElementById('modal').classList.add('open');
+editTarget = null;
+for (var i = 0; i < tanks.length; i++) { if (tanks[i].id === id) { editTarget = tanks[i]; break; } }
+if (!editTarget) return;
+tempCount = editTarget.count;
+document.getElementById(‘modal-title’).textContent = editTarget.name;
+document.getElementById(‘modal-breed’).textContent = TAG_LABELS[editTarget.tag].toUpperCase() + ’ · 個体記録’;
+document.getElementById(‘modal-count’).textContent = tempCount;
+document.getElementById(‘modal-note’).value = ‘’;
+document.getElementById(‘modal’).classList.add(‘open’);
 }
 
 function openAddModal() {
-  const name = prompt('品種名を入力:');
-  if (!name) return;
-  const newId = Date.now();
-  tanks.push({ id: newId, name, tag: 'mixed', count: 1, obs: '新規追加。' });
-  renderTiles();
-  openEditModal(newId);
+var name = prompt(‘品種名を入力:’);
+if (!name) return;
+var newId = Date.now();
+tanks.push({ id: newId, name: name, tag: ‘mixed’, count: 1, obs: ‘新規追加。’ });
+renderTiles();
+openEditModal(newId);
 }
 
 function closeModal(e) {
-  if (e.target === document.getElementById('modal')) {
-    document.getElementById('modal').classList.remove('open');
-  }
+if (e.target === document.getElementById(‘modal’)) {
+document.getElementById(‘modal’).classList.remove(‘open’);
+}
 }
 
 function changeCount(delta) {
-  tempCount = Math.max(0, tempCount + delta);
-  document.getElementById('modal-count').textContent = tempCount;
+tempCount = Math.max(0, tempCount + delta);
+document.getElementById(‘modal-count’).textContent = tempCount;
 }
 
 function saveModal() {
-  if (!editTarget) return;
-  const note = document.getElementById('modal-note').value.trim();
-  editTarget.count = tempCount;
-  if (note) {
-    editTarget.obs = note;
-    const today = new Date();
-    const dateStr = `${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
-    logs.unshift({ date: dateStr, type: 'note', text: `<strong>${editTarget.name}</strong> ${note}` });
-    if (logs.length > 20) logs.pop();
-  }
-  renderTiles();
-  renderLogs();
-  document.getElementById('modal').classList.remove('open');
+if (!editTarget) return;
+var note = document.getElementById(‘modal-note’).value.trim();
+editTarget.count = tempCount;
+if (note) {
+editTarget.obs = note;
+var now = new Date();
+var ds = String(now.getMonth()+1).padStart(2,‘0’) + ‘/’ + String(now.getDate()).padStart(2,‘0’);
+logs.unshift({ date: ds, type: ‘note’, text: ‘<strong>’ + editTarget.name + ’</strong> ’ + note });
+if (logs.length > 20) logs.pop();
+}
+renderTiles();
+renderLogs();
+document.getElementById(‘modal’).classList.remove(‘open’);
 }
 
 function toggleLog() {
-  logVisible = !logVisible;
-  renderLogs();
+logVisible = !logVisible;
+renderLogs();
 }
 
-// ======= 天気 =======
-const API_KEY = '4f2152916a220ca8c65df5671fe943fb';
-const CITY = 'Kiyose';
+var API_KEY = ‘4f2152916a220ca8c65df5671fe943fb’;
+var CITY = ‘Kiyose’;
 
-async function updateWeather() {
-  const btn = document.querySelector('.btn-primary');
-  btn.textContent = 'SYNCING...';
-  try {
-    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric`);
-    const d = await res.json();
-    const temp = Math.round(d.main.temp);
-    const feel = Math.round(d.main.feels_like);
-    const weatherMap = {
-      'Clear': '☀', 'Clouds': '☁', 'Rain': '🌧', 'Drizzle': '🌦',
-      'Thunderstorm': '⛈', 'Snow': '❄', 'Mist': '🌫', 'Haze': '🌫'
-    };
-    const icon = weatherMap[d.weather[0].main] || '◉';
-    document.getElementById('weather-display').textContent = `${icon} ${temp}°C`;
-    document.getElementById('temp-display').textContent = `水温 ${Math.max(temp - 2, 0)}°C推定`;
-    const now = new Date();
-    document.getElementById('sync-time').textContent =
-      `LAST SYNC: ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-    // ログに気象記録追加
-    const dateStr = `${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
-    logs.unshift({ date: dateStr, type: 'note', text: `天気更新 — ${d.weather[0].description} ${temp}°C / 体感${feel}°C` });
-    if (logs.length > 20) logs.pop();
-    renderLogs();
-  } catch(e) {
-    document.getElementById('weather-display').textContent = '— ERR';
-  }
-  btn.textContent = '↻ UPDATE LOG';
+function updateWeather() {
+var btn = document.querySelector(’.btn-primary’);
+btn.textContent = ‘SYNCING…’;
+fetch(‘https://api.openweathermap.org/data/2.5/weather?q=’ + CITY + ‘&appid=’ + API_KEY + ‘&units=metric’)
+.then(function(r){ return r.json(); })
+.then(function(d) {
+var temp = Math.round(d.main.temp);
+var feel = Math.round(d.main.feels_like);
+var wm = { Clear:‘☀’, Clouds:‘☁’, Rain:‘🌧’, Drizzle:‘🌦’, Thunderstorm:‘⛈’, Snow:‘❄’, Mist:‘🌫’, Haze:‘🌫’ };
+var icon = wm[d.weather[0].main] || ‘◉’;
+document.getElementById(‘weather-display’).textContent = icon + ’ ’ + temp + ‘°C’;
+document.getElementById(‘temp-display’).textContent = ’水温 ’ + Math.max(temp-2,0) + ‘°C推定’;
+var now = new Date();
+document.getElementById(‘sync-time’).textContent =
+’LAST SYNC: ’ + String(now.getHours()).padStart(2,‘0’) + ‘:’ + String(now.getMinutes()).padStart(2,‘0’);
+var ds = String(now.getMonth()+1).padStart(2,‘0’) + ‘/’ + String(now.getDate()).padStart(2,‘0’);
+logs.unshift({ date: ds, type: ‘note’, text: ’天気更新 — ’ + d.weather[0].description + ’ ’ + temp + ‘°C / 体感’ + feel + ‘°C’ });
+if (logs.length > 20) logs.pop();
+renderLogs();
+})
+.catch(function(){ document.getElementById(‘weather-display’).textContent = ‘— ERR’; })
+.finally(function(){ btn.textContent = ‘↻ UPDATE LOG’; });
 }
 
-// ======= 泡エフェクト =======
 function createBubbles() {
-  const ocean = document.querySelector('.ocean-bg');
-  for (let i = 0; i < 12; i++) {
-    const b = document.createElement('div');
-    b.className = 'bubble';
-    const size = Math.random() * 8 + 3;
-    b.style.cssText = `
-      width:${size}px; height:${size}px;
-      left:${Math.random()*100}%;
-      bottom:${Math.random()*30}%;
-      animation-duration:${Math.random()*8+6}s;
-      animation-delay:${Math.random()*8}s;
-    `;
-    ocean.appendChild(b);
-  }
+var ocean = document.querySelector(’.ocean-bg’);
+for (var i = 0; i < 12; i++) {
+var b = document.createElement(‘div’);
+b.className = ‘bubble’;
+var size = Math.random() * 8 + 3;
+b.style.cssText = ‘width:’ + size + ‘px;height:’ + size + ‘px;left:’ + (Math.random()*100) + ‘%;bottom:’ + (Math.random()*30) + ‘%;animation-duration:’ + (Math.random()*8+6) + ‘s;animation-delay:’ + (Math.random()*8) + ‘s;’;
+ocean.appendChild(b);
+}
 }
 
-// ======= 初期化 =======
 createBubbles();
 renderTiles();
 renderLogs();
